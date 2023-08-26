@@ -3,7 +3,11 @@ import { webhookCallback } from "grammy";
 import type { Bot } from "#root/bot/index.js";
 import { logger } from "#root/logger.js";
 
-export const createServer = async (bot: Bot) => {
+export const createServer = async ({
+  getBot,
+}: {
+  getBot: (token: string) => Promise<Bot>;
+}) => {
   const server = fastify({
     logger,
   });
@@ -16,7 +20,11 @@ export const createServer = async (bot: Bot) => {
 
   server.get("/", () => ({ status: true }));
 
-  server.post(`/${bot.token}`, webhookCallback(bot, "fastify"));
+  server.post("/:token([0-9]+:[a-zA-Z0-9_-]+)", async (request, response) => {
+    const { token } = request.params as { token: string };
+
+    return webhookCallback(await getBot(token), "fastify")(request, response);
+  });
 
   return server;
 };
