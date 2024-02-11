@@ -59,10 +59,9 @@ Follow these steps to set up and run your bot using this template:
     npm install --only=prod
     ```
     
-    Set the `NODE_ENV` environment variable to "production" in your `.env` file. Also, make sure to update `BOT_WEBHOOK` with the actual URL where your bot will receive updates.
+    Set the `NODE_ENV` environment variable to "production" in your `.env` file.
     ```dotenv
     NODE_ENV=production
-    BOT_WEBHOOK=<your_webhook_url>
     ```
     
     Start the bot in production mode:
@@ -277,18 +276,8 @@ npm i @grammyjs/runner
     </td>
     <td>
         <i>Optional.</i>
-        Specifies method to receive incoming updates. (<code>polling</code> or <code>webhook</code>)
+        Specifies method to receive incoming updates. (<code>polling</code> or <code>runner</code>)
         Defaults to <code>polling</code>.
-    </td>
-  </tr>
-  <tr>
-    <td>BOT_WEBHOOK</td>
-    <td>
-        String
-    </td>
-    <td>
-        <i>Optional in <code>polling</code> mode.</i>
-        Webhook endpoint URL, used to configure webhook in <b>production</b> environment.
     </td>
   </tr>
   <tr>
