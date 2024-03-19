@@ -32,10 +32,15 @@ Follow these steps to set up and run your bot using this template:
 2. **Environment Variables Setup**
     
     Create an environment variables file by copying the provided example file:
-     ```bash
-     cp .env.example .env
-     ```
-    Open the newly created `.env` file and set the `BOT_TOKEN` environment variable.
+    ```bash
+    # development
+    cp .env.example .env.bot.dev
+
+    # production
+    cp .env.example .env.bot.prod
+    ```
+
+    Open the newly created `.env.bot.dev` and `.env.bot.prod` files and set the `BOT_TOKEN` environment variable.
 
 3. **Launching the Bot**
     
@@ -49,17 +54,12 @@ Follow these steps to set up and run your bot using this template:
     ```
     Start the bot in watch mode (auto-reload when code changes):
     ```bash
-    npm run dev
+    docker compose up
     ```
 
    **Production Mode:**
     
-    Install only production dependencies (no development dependencies):
-    ```bash
-    npm install --only=prod
-    ```
-    
-    Set the `NODE_ENV` environment variable to "production" in your `.env` file. Also, make sure to update `BOT_WEBHOOK` with the actual URL where your bot will receive updates.
+    Set the `NODE_ENV` environment variable to "production" in your `.env.bot.prod` file. Also, make sure to update `BOT_WEBHOOK` with the actual URL where your bot will receive updates.
     ```dotenv
     NODE_ENV=production
     BOT_WEBHOOK=<your_webhook_url>
@@ -67,9 +67,7 @@ Follow these steps to set up and run your bot using this template:
     
     Start the bot in production mode:
     ```bash
-    npm start
-    # or
-    npm run start:force # if you want to skip type checking
+    docker compose -f compose.yml -f compose.prod.yml up
     ```
 
 ### List of Available Commands
