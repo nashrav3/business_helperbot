@@ -1,28 +1,11 @@
 import { Composer } from "grammy";
 import type { Context } from "#root/bot/context.js";
 import { logHandle } from "#root/bot/helpers/logging.js";
-
-interface CopyMessageParameters {
-  ctx: Context;
-  chatId: number | string;
-  messageThreadId: number;
-  replyToMessageId?: number;
-}
+import { copyMessage } from "../helpers/copy-message.js";
 
 const composer = new Composer<Context>();
 
 const feature = composer;
-
-async function copyMessage(parameters: CopyMessageParameters) {
-  const { ctx, chatId, messageThreadId, replyToMessageId } = parameters;
-  if (ctx.businessMessage?.text) {
-    return ctx.api.sendMessage(chatId, ctx.businessMessage.text, {
-      message_thread_id: messageThreadId,
-      reply_to_message_id: replyToMessageId,
-      entities: ctx.businessMessage.entities,
-    });
-  }
-}
 
 feature.on(
   "business_message",
@@ -41,16 +24,52 @@ feature.on(
     if (!user) {
       return next();
     }
+    const isReply = Boolean(ctx.businessMessage.reply_to_message);
     let copiedMessageId;
     let topicMessageThreadId;
+    const isFromBusinessOwner = ctx.from.id === Number(user.telegramId);
     if (user.groupId) {
       if (user.topics.length > 0) {
         topicMessageThreadId = user.topics[0].threadId;
-        copiedMessageId = await copyMessage({
-          ctx,
-          chatId: Number(user.groupId),
-          messageThreadId: user.topics[0].threadId,
-        });
+        if (isReply) {
+          const replyToMessage = await ctx.prisma.businessMessage.findFirst({
+            where: {
+              messageId: ctx.businessMessage.reply_to_message?.message_id,
+              groupId: Number(user.groupId),
+              threadId: topicMessageThreadId,
+            },
+          });
+          let isMessageCopied = false;
+
+          try {
+            copiedMessageId = await copyMessage({
+              ctx,
+              chatId: Number(user.groupId),
+              messageThreadId: topicMessageThreadId,
+              replyToMessageId: replyToMessage?.topicMessageId,
+              isFromBusinessOwner,
+            });
+            isMessageCopied = true;
+          } catch (error) {
+            throw new Error(String(error));
+          }
+
+          if (!isMessageCopied) {
+            copiedMessageId = await copyMessage({
+              ctx,
+              chatId: Number(user.groupId),
+              messageThreadId: user.topics[0].threadId,
+              isFromBusinessOwner,
+            });
+          }
+        } else if (!isReply) {
+          copiedMessageId = await copyMessage({
+            ctx,
+            chatId: Number(user.groupId),
+            messageThreadId: user.topics[0].threadId,
+            isFromBusinessOwner,
+          });
+        }
       } else {
         const topic = await ctx.api.createForumTopic(
           Number(user.groupId),
@@ -76,6 +95,7 @@ feature.on(
           ctx,
           chatId: Number(user.groupId),
           messageThreadId: topic.message_thread_id,
+          isFromBusinessOwner,
         });
       }
     } else {

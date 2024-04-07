@@ -1,6 +1,6 @@
 import { autoChatAction } from "@grammyjs/auto-chat-action";
 import { hydrate } from "@grammyjs/hydrate";
-import { hydrateReply, parseMode } from "@grammyjs/parse-mode";
+import { hydrateReply } from "@grammyjs/parse-mode";
 import { BotConfig, StorageAdapter, Bot as TelegramBot, session } from "grammy";
 import {
   Context,
@@ -39,7 +39,7 @@ export function createBot(token: string, options: Options) {
   const protectedBot = bot.errorBoundary(errorHandler);
 
   // Middlewares
-  bot.api.config.use(parseMode("HTML"));
+  // bot.api.config.use(parseMode("HTML"));
 
   if (config.isDev) {
     protectedBot.use(updateLogger());
