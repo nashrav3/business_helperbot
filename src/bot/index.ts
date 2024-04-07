@@ -9,7 +9,11 @@ import {
 } from "#root/bot/context.js";
 import {
   adminFeature,
+  forwardMessageFeature,
+  groupMigrationFeature,
   languageFeature,
+  setBusinessConnectionFeature,
+  setGroupFeature,
   unhandledFeature,
   welcomeFeature,
 } from "#root/bot/features/index.js";
@@ -59,7 +63,10 @@ export function createBot(token: string, options: Options) {
   // Handlers
   protectedBot.use(welcomeFeature);
   protectedBot.use(adminFeature);
-
+  protectedBot.use(setGroupFeature);
+  protectedBot.use(groupMigrationFeature);
+  protectedBot.use(forwardMessageFeature);
+  protectedBot.use(setBusinessConnectionFeature);
   if (isMultipleLocales) {
     protectedBot.use(languageFeature);
   }

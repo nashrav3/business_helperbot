@@ -8,9 +8,40 @@ datasource db {
 }
 
 model User {
-  telegramId BigInt   @id @unique @map("telegram_id")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-  createdAt  DateTime @default(now()) @map("created_at")
+  telegramId           BigInt            @id @unique @map("telegram_id")
+  updatedAt            DateTime          @updatedAt @map("updated_at")
+  createdAt            DateTime          @default(now()) @map("created_at")
+  businessConnectionId String?           @unique @map("business_connection_id")
+  groupId              BigInt?           @map("group_id")
+  topics               Topic[]
+  businessMessages     BusinessMessage[]
 
   @@map(name: "users")
+}
+
+model BusinessMessage {
+  id             Int      @id @default(autoincrement()) @map("id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  costumerId     BigInt   @map("costumer_id")
+  userId         BigInt   @map("user_id")
+  messageId      Int      @map("message_id")
+  groupId        BigInt   @map("group_id")
+  threadId       Int      @map("thread_id")
+  topicMessageId Int      @map("topic_message_id")
+  user           User     @relation(fields: [userId], references: [telegramId])
+
+  @@map(name: "business_messages")
+}
+
+model Topic {
+  id         Int      @id @default(autoincrement()) @map("id")
+  ownerId    BigInt   @map("owner_id")
+  groupId    BigInt   @map("group_id")
+  threadId   Int      @map("thread_id")
+  customerId BigInt   @map("customer_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  owner      User     @relation(fields: [ownerId], references: [telegramId])
+
+  @@unique([groupId, threadId])
+  @@map(name: "topics")
 }
