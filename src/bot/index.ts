@@ -23,6 +23,7 @@ import { updateLogger } from "#root/bot/middlewares/index.js";
 import { config } from "#root/config.js";
 import { logger } from "#root/logger.js";
 import type { PrismaClientX } from "#root/prisma/index.js";
+import { detectChangeFeature } from "./features/detect-change.js";
 
 type Options = {
   prisma: PrismaClientX;
@@ -67,6 +68,7 @@ export function createBot(token: string, options: Options) {
   protectedBot.use(groupMigrationFeature);
   protectedBot.use(forwardMessageFeature);
   protectedBot.use(setBusinessConnectionFeature);
+  protectedBot.use(detectChangeFeature);
   if (isMultipleLocales) {
     protectedBot.use(languageFeature);
   }
