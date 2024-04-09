@@ -137,4 +137,4 @@ data/
 *.db
 *.db-journal
 *.sqlite3
-prisma/*.sqlite3
+prisma/dev.sqlite3
