@@ -136,3 +136,4 @@ data/
 # Ignore SQLite database
 *.db
 *.db-journal
+*.sqlite3

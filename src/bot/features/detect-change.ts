@@ -2,6 +2,7 @@ import { Composer } from "grammy";
 import type { Context } from "#root/bot/context.js";
 import { logHandle } from "#root/bot/helpers/logging.js";
 import { copyMessage } from "../helpers/copy-message.js";
+import { getDeletedMessageLink } from "../helpers/get-deleted-message-link.js";
 
 const composer = new Composer<Context>();
 
@@ -87,19 +88,22 @@ feature.on(
     });
     if (user.groupId) {
       if (user.topics.length > 0 && deletedMessages) {
-        for (const message of deletedMessages) {
-          ctx.api.sendMessage(
-            Number(user.groupId),
-            ctx.t("group.deleted-message"),
-            {
-              message_thread_id: user.topics[0].threadId,
-              reply_to_message_id: message.topicMessageId,
-            },
-          );
-          // Wait for 0.5 seconds
-          // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        }
+        await ctx.api.sendMessage(
+          Number(user.groupId),
+          `${ctx.t("group.deleted-message")}\n${deletedMessages
+            .map((message) =>
+              getDeletedMessageLink(
+                Number(user.groupId),
+                user.topics[0].threadId,
+                message.topicMessageId,
+              ),
+            )
+            .join("\n")}`,
+          {
+            message_thread_id: user.topics[0].threadId,
+            reply_to_message_id: deletedMessages[0].topicMessageId,
+          },
+        );
       }
     } else {
       await ctx.api.sendMessage(

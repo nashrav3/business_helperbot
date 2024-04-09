@@ -73,7 +73,7 @@ feature.on(
       } else {
         const topic = await ctx.api.createForumTopic(
           Number(user.groupId),
-          ctx.t(`${ctx.from.first_name} ${ctx.from.last_name}`),
+          `${ctx.chat.first_name} ${ctx.chat.last_name || " "}`,
         );
         topicMessageThreadId = topic.message_thread_id;
         await ctx.prisma.topic.create({
@@ -86,7 +86,12 @@ feature.on(
         });
         await ctx.api.sendMessage(
           Number(user.groupId),
-          `${ctx.from.first_name} ${ctx.from.last_name} ${ctx.from.username}`,
+          ctx.t(`group.new-topic-created`, {
+            firstName: ctx.chat.first_name,
+            lastName: ctx.chat.last_name || "_",
+            username: ctx.chat.username || "_",
+            userId: ctx.chat.id,
+          }),
           {
             message_thread_id: topic.message_thread_id,
           },
