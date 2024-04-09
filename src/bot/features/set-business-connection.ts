@@ -23,7 +23,7 @@ feature.on(
     await (ctx.businessConnection.is_enabled
       ? ctx.api.sendMessage(
           ctx.businessConnection.user_chat_id,
-          ctx.t("set-connection.connection-is-set-plesae-set-group"),
+          ctx.t("set-connection.connection-is-set-please-set-group"),
         )
       : ctx.api.sendMessage(
           ctx.businessConnection.user_chat_id,
