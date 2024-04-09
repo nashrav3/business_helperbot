@@ -36,5 +36,5 @@ group =
     .bot-should-be-added-by-owner = يجب اضافة البوت من قبل مالك المجموعة فقط!
     .group-should-be-upgraded-to-supergroup-with-topics = يجب ترقية المجموعة الى مجموعة مع موضوعات
 set-connection =
-    .connection-is-set-please-set-group = تم ربط البوت بحسابك يرجى ضبط المجموعة ان لم تقم بذلك بعد
+    .connection-is-set-plesae-set-group = تم ربط البوت بحسابك يرجى ضبط المجموعة ان لم تقم بذلك بعد
     .connection-is-disabled = تم الغاء ربط البوت بحسابك
