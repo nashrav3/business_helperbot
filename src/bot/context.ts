@@ -8,7 +8,9 @@ import type { Logger } from "#root/logger.js";
 import type { PrismaClientX } from "#root/prisma/index.js";
 
 export type SessionData = {
-  // field?: string;
+  state: "idle" | "awaiting_trigger_text" | "awaiting_reply";
+  triggerText: string;
+  isWelcomeReply: boolean;
 };
 
 type ExtendedContextFlavor = {

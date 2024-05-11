@@ -24,6 +24,8 @@ import { config } from "#root/config.js";
 import { logger } from "#root/logger.js";
 import type { PrismaClientX } from "#root/prisma/index.js";
 import { detectChangeFeature } from "./features/detect-change.js";
+import { newConversationReplyFeature } from "./features/new-conversation-reply.js";
+import { setReplayFeature } from "./features/set-reply.js";
 
 type Options = {
   prisma: PrismaClientX;
@@ -51,7 +53,11 @@ export function createBot(token: string, options: Options) {
   protectedBot.use(hydrate());
   protectedBot.use(
     session({
-      initial: () => ({}),
+      initial: () => ({
+        state: "idle",
+        triggerText: "NULL",
+        isWelcomeReply: false,
+      }),
       storage: sessionStorage,
       getSessionKey: (ctx) => {
         const key = ctx.chat?.id;
@@ -62,6 +68,7 @@ export function createBot(token: string, options: Options) {
   protectedBot.use(i18n);
 
   // Handlers
+  protectedBot.use(newConversationReplyFeature);
   protectedBot.use(welcomeFeature);
   protectedBot.use(adminFeature);
   protectedBot.use(setGroupFeature);
@@ -69,6 +76,7 @@ export function createBot(token: string, options: Options) {
   protectedBot.use(forwardMessageFeature);
   protectedBot.use(setBusinessConnectionFeature);
   protectedBot.use(detectChangeFeature);
+  protectedBot.use(setReplayFeature);
   if (isMultipleLocales) {
     protectedBot.use(languageFeature);
   }

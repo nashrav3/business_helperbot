@@ -7,7 +7,9 @@ const composer = new Composer<Context>();
 const feature = composer.chatType("private");
 
 feature.on("message", logHandle("unhandled-message"), (ctx) => {
-  return ctx.reply(ctx.t("unhandled"));
+  return ctx.reply(
+    ctx.t(`unhandled ${JSON.stringify(ctx.session, undefined, 2)}`),
+  );
 });
 
 feature.on("callback_query", logHandle("unhandled-callback-query"), (ctx) => {

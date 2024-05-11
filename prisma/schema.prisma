@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,6 +15,7 @@ model User {
   groupId              BigInt?           @map("group_id")
   topics               Topic[]
   businessMessages     BusinessMessage[]
+  replys               Reply[]
 
   @@map(name: "users")
 }
@@ -44,4 +45,32 @@ model Topic {
 
   @@unique([groupId, threadId])
   @@map(name: "topics")
+}
+
+model Reply {
+  replyId      Int       @id @default(autoincrement()) @map("reply_id")
+  ownerId      BigInt    @map("owner_id")
+  isWelcome    Boolean   @map("is_welcome")
+  triggerText  String?   @map("trigger_text")
+  text         String?   @db.VarChar(4096)
+  fileId       String?   @map("file_id")
+  type         ReplyType
+  replyOptions Json?
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  owner User @relation(fields: [ownerId], references: [telegramId])
+
+  @@map("replys")
+}
+
+enum ReplyType {
+  animation
+  audio
+  document
+  photo
+  sticker
+  video
+  video_note
+  voice
+  text
 }
